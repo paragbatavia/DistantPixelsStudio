@@ -1,5 +1,5 @@
 // ============================================================================
-// Distant Pixels Studio v1.0.5
+// Distant Pixels Studio v1.0.6
 // PixInsight Linear Processing Pipeline
 // ============================================================================
 //
@@ -28,7 +28,7 @@
 
 // PixInsight script feature directives (ignore linter warnings on these lines)
 #feature-id    Utilities > DistantPixelsStudio
-#feature-info  Distant Pixels Studio v1.0.5 - Linear processing pipeline for astrophotography.
+#feature-info  Distant Pixels Studio v1.0.6 - Linear processing pipeline for astrophotography.
 
 #include <pjsr/UndoFlag.jsh>
 #include <pjsr/StdCursor.jsh>
@@ -57,7 +57,6 @@ function saveSettings(dialog)
          lFile: dialog.lRow.edit.text,
          cropFile: dialog.cropFileEdit.text,
          outputDir: dialog.outDirEdit.text,
-         suffix: dialog.suffixEdit.text,
          cropEnabled: dialog.cropCheck.checked,
          nb_processEnabled: dialog.nb_processCheck.checked,
          nb_gradientEnabled: dialog.nb_gradientCheck.checked,
@@ -119,7 +118,6 @@ function loadSettings(dialog)
          if (parms.lFile !== undefined) dialog.lRow.edit.text = parms.lFile;
          if (parms.cropFile !== undefined) dialog.cropFileEdit.text = parms.cropFile;
          if (parms.outputDir !== undefined) dialog.outDirEdit.text = parms.outputDir;
-         if (parms.suffix !== undefined) dialog.suffixEdit.text = parms.suffix;
          if (parms.cropEnabled !== undefined) dialog.cropCheck.checked = parms.cropEnabled;
          if (parms.nb_processEnabled !== undefined) dialog.nb_processCheck.checked = parms.nb_processEnabled;
          if (parms.nb_gradientEnabled !== undefined) dialog.nb_gradientCheck.checked = parms.nb_gradientEnabled;
@@ -1119,7 +1117,7 @@ function PipelineDialog()
    this.__base__ = Dialog;
    this.__base__();
 
-   this.windowTitle = "Distant Pixels Studio v1.0.5";
+   this.windowTitle = "Distant Pixels Studio v1.0.6";
    this.adjustToContents();
    this.setVariableSize();
 
@@ -1638,18 +1636,6 @@ function PipelineDialog()
    outDirRow.add( this.outDirEdit, 100 );
    outDirRow.add( this.outDirBtn );
 
-   this.suffixLabel = new Label( this );
-   this.suffixLabel.text = "Filename suffix:";
-   labelStyle( this.suffixLabel );
-
-   this.suffixEdit = new Edit( this );
-   this.suffixEdit.text = "_proc";
-
-   var suffixRow = new HorizontalSizer;
-   suffixRow.spacing = 6;
-   suffixRow.add( this.suffixLabel );
-   suffixRow.add( this.suffixEdit, 100 );
-
    var outGroup = new GroupBox( this );
    outGroup.title = "Output";
    outGroup.sizer = new VerticalSizer;
@@ -1657,9 +1643,46 @@ function PipelineDialog()
    outGroup.sizer.add( this.out_saveTifCheck );
    outGroup.sizer.add( this.out_keepImagesCheck );
    outGroup.sizer.add( outDirRow );
-   outGroup.sizer.add( suffixRow );
 
-   // ---------- Buttons ----------
+   // ---------- Tool Buttons (lower left) ----------
+   this.newInstanceButton = new ToolButton( this );
+   this.newInstanceButton.icon = this.scaledResource( ":/process-interface/new-instance.png" );
+   this.newInstanceButton.setScaledFixedSize( 20, 20 );
+   this.newInstanceButton.toolTip = "New Instance";
+   this.newInstanceButton.onMousePress = function()
+   {
+      this.hasFocus = true;
+      saveSettings( this.dialog );
+      this.pushed = false;
+      this.dialog.newInstance();
+   };
+
+   this.resetButton = new ToolButton( this );
+   this.resetButton.icon = this.scaledResource( ":/icons/reload.png" );
+   this.resetButton.setScaledFixedSize( 20, 20 );
+   this.resetButton.toolTip = "<p>Reset all settings to default values.</p>";
+   this.resetButton.onClick = function()
+   {
+      var msg = new MessageBox( "Do you really want to reset all settings to their default values?",
+                                "Distant Pixels Studio", StdIcon_Warning, StdButton_Yes, StdButton_No );
+      if ( msg.execute() == StdButton_Yes )
+      {
+         Settings.remove( "DistantPixelsStudio" );
+         this.dialog.resetRequest = true;
+         this.dialog.cancel();
+      }
+   };
+
+   this.helpButton = new ToolButton( this );
+   this.helpButton.icon = this.scaledResource( ":/process-interface/browse-documentation.png" );
+   this.helpButton.setScaledFixedSize( 20, 20 );
+   this.helpButton.toolTip = "<p>Browse Documentation</p>";
+   this.helpButton.onClick = function()
+   {
+      Dialog.browseScriptDocumentation( "DistantPixelsStudio" );
+   };
+
+   // ---------- Action Buttons ----------
    this.ok_Button = new PushButton( this );
    this.ok_Button.text = "Run";
    this.ok_Button.icon = this.scaledResource( ":/icons/play.png" );
@@ -1680,6 +1703,9 @@ function PipelineDialog()
 
    var buttonRow = new HorizontalSizer;
    buttonRow.spacing = 6;
+   buttonRow.add( this.newInstanceButton );
+   buttonRow.add( this.resetButton );
+   buttonRow.add( this.helpButton );
    buttonRow.addStretch();
    buttonRow.add( this.ok_Button );
    buttonRow.add( this.cancel_Button );
@@ -1722,9 +1748,7 @@ function PipelineDialog()
       saveSettings(this);
       
       var outDir = this.outDirEdit.text.trim();
-      var suffix = this.suffixEdit.text.trim();
       ensureFolder( outDir );
-      if ( suffix.length === 0 ) suffix = "_proc";
 
       var doCrop = this.cropCheck.checked;
       var cropFile = this.cropFileEdit.text.trim();
