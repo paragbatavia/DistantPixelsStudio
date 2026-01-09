@@ -1,5 +1,5 @@
 /**************************************************************************
- * Distant Pixels Studio v1.0
+ * Distant Pixels Studio v1.0.3
  * Astrophotography Workflow Tool for Photoshop
  *
  * Copyright (C) 2026 Distant Pixels Studio
