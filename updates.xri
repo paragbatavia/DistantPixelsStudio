@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xri version="1.0">
+  <description>
+    <p><b>Distant Pixels Studio</b></p>
+    <p>Astrophotography workflow automation scripts for PixInsight.</p>
+    <p>Copyright (C) 2026 Distant Pixels Studio. Licensed under GPL v3.0.</p>
+  </description>
+  <platform os="all" arch="noarch" version="1.8.0:2.0.0">
+    <package fileName="DistantPixelsStudio-1.0.0.tar.gz"
+             sha1="b9679e2210d13741bcef3a63ea31c4efa9923891"
+             type="script"
+             releaseDate="20260109">
+      <title>Distant Pixels Studio v1.0</title>
+      <description>
+        <p>Linear processing pipeline for astrophotography.</p>
+        <p>Features: Dual NB/L and RGB workflows, folder scanner,
+        MultiscaleAdaptiveStretch, star removal.</p>
+      </description>
+    </package>
+  </platform>
+</xri>
