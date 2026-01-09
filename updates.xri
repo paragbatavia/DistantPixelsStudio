@@ -6,11 +6,11 @@
     <p>Copyright (C) 2026 Distant Pixels Studio. Licensed under GPL v3.0.</p>
   </description>
   <platform os="all" arch="noarch" version="1.8.0:2.0.0">
-    <package fileName="DistantPixelsStudio-1.0.0.tar.gz"
-             sha1="6b1f98d58845ee123cf71e8e6761066b7a1d88a2"
+    <package fileName="DistantPixelsStudio-1.0.2.tar.gz"
+             sha1="c48749b28262b4585e04dd845e6967af3eadecb7"
              type="script"
              releaseDate="20260109">
-      <title>Distant Pixels Studio v1.0</title>
+      <title>Distant Pixels Studio v1.0.2</title>
       <description>
         <p>Linear processing pipeline for astrophotography.</p>
         <p>Features: Dual NB/L and RGB workflows, folder scanner,
