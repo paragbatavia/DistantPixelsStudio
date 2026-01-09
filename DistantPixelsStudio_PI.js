@@ -1,5 +1,5 @@
 // ============================================================================
-// Distant Pixels Studio v1.0.6
+// Distant Pixels Studio v1.0.7
 // PixInsight Linear Processing Pipeline
 // ============================================================================
 //
@@ -28,7 +28,7 @@
 
 // PixInsight script feature directives (ignore linter warnings on these lines)
 #feature-id    Utilities > DistantPixelsStudio
-#feature-info  Distant Pixels Studio v1.0.6 - Linear processing pipeline for astrophotography.
+#feature-info  Distant Pixels Studio v1.0.7 - Linear processing pipeline for astrophotography.
 
 #include <pjsr/UndoFlag.jsh>
 #include <pjsr/StdCursor.jsh>
@@ -1117,9 +1117,22 @@ function PipelineDialog()
    this.__base__ = Dialog;
    this.__base__();
 
-   this.windowTitle = "Distant Pixels Studio v1.0.6";
+   this.windowTitle = "Distant Pixels Studio v1.0.7";
    this.adjustToContents();
    this.setVariableSize();
+
+   // ---------- Header Info Box ----------
+   this.helpLabel = new Label( this );
+   this.helpLabel.frameStyle = FrameStyle_Box;
+   this.helpLabel.minWidth = 45 * this.font.width( 'M' );
+   this.helpLabel.margin = 6;
+   this.helpLabel.wordWrapping = true;
+   this.helpLabel.useRichText = true;
+   this.helpLabel.text =
+      "<p><b>Distant Pixels Studio Linear Processor v1.0.7</b> &mdash; " +
+      "A script to implement linear processing workflows for RGB and Narrowband astrophotography images.<br/>" +
+      "<br/>" +
+      "Copyright &copy; 2026 Distant Pixels Studio</p>";
 
    var labelStyle = function( w )
    {
@@ -1713,6 +1726,7 @@ function PipelineDialog()
    // ---------- Layout ----------
    this.sizer = new VerticalSizer;
    this.sizer.margin = 6; this.sizer.spacing = 8;
+   this.sizer.add( this.helpLabel );
    this.sizer.add( filesGroup );
    this.sizer.add( optsGroup );
    this.sizer.add( outGroup );
