@@ -1,4 +1,4 @@
-# Distant Pixels Studio v1.0.4
+# Distant Pixels Studio v1.0.5
 
 A two-tool workflow for astrophotography image processing: PixInsight linear preprocessing combined with Photoshop layer composition.
 
@@ -174,7 +174,7 @@ See [UserManual.md](UserManual.md) for comprehensive documentation including:
 
 ## Version History
 
-### v1.0.4 (January 2026)
+### v1.0.5 (January 2026)
 - Initial public release
 - PixInsight: Dual NB/L and RGB pipelines with MultiscaleAdaptiveStretch
 - Photoshop: Mode A (LRGB/HaLRGB) and Mode B (Narrowband palettes)

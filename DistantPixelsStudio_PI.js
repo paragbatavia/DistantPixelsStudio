@@ -1,5 +1,5 @@
 // ============================================================================
-// Distant Pixels Studio v1.0.4
+// Distant Pixels Studio v1.0.5
 // PixInsight Linear Processing Pipeline
 // ============================================================================
 //
@@ -28,7 +28,7 @@
 
 // PixInsight script feature directives (ignore linter warnings on these lines)
 #feature-id    Utilities > DistantPixelsStudio
-#feature-info  Distant Pixels Studio v1.0.4 - Linear processing pipeline for astrophotography.
+#feature-info  Distant Pixels Studio v1.0.5 - Linear processing pipeline for astrophotography.
 
 #include <pjsr/UndoFlag.jsh>
 #include <pjsr/StdCursor.jsh>
@@ -1119,7 +1119,7 @@ function PipelineDialog()
    this.__base__ = Dialog;
    this.__base__();
 
-   this.windowTitle = "Distant Pixels Studio v1.0.4";
+   this.windowTitle = "Distant Pixels Studio v1.0.5";
    this.adjustToContents();
    this.setVariableSize();
 

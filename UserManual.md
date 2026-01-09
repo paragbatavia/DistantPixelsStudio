@@ -1,4 +1,4 @@
-# Distant Pixels Studio v1.0.4 - User Manual
+# Distant Pixels Studio v1.0.5 - User Manual
 
 A two-tool workflow for astrophotography image processing, combining PixInsight linear preprocessing with Photoshop layer composition.
 
@@ -116,6 +116,7 @@ The folder scanner automatically detects master files by parsing filenames for f
 Use the **...** button next to each channel to manually select files. The **Clear** button removes the selection.
 
 **Available channels:**
+
 | Channel | Description |
 |---------|-------------|
 | Ha | Hydrogen-alpha narrowband |
@@ -133,6 +134,7 @@ All channels are optional. Only selected channels will be processed.
 Cropping uses saved DynamicCrop process icons (`.xpsm` files).
 
 **To create a crop file:**
+
 1. Open a reference image in PixInsight
 2. Apply **DynamicCrop** with your desired crop region
 3. Drag the process icon from the Process Bar to your desktop or folder
@@ -146,6 +148,7 @@ The same crop will be applied to all images ensuring consistent framing.
 Enable "Enable NB/L processing" to process Ha, OIII, SII, and L channels.
 
 **Processing order:**
+
 1. **Open** - Load the image
 2. **Crop** - Apply crop (if enabled)
 3. **Gradient correction** - Remove gradients using GradientCorrection
@@ -156,6 +159,7 @@ Enable "Enable NB/L processing" to process Ha, OIII, SII, and L channels.
 8. **Final noise reduction** - Post-stretch noise reduction
 
 **Noise reduction parameters:**
+
 | Parameter | Range | Default | Description |
 |-----------|-------|---------|-------------|
 | Denoise | 0-100 | 40 | Noise reduction strength |
@@ -239,12 +243,14 @@ The Photoshop tool builds organized layer structures from PixInsight output file
 ### 4.2 Quick Start
 
 **For LRGB:**
+
 1. Select Mode A
 2. Enable "Auto-detect from folder" and click **Select Folder...**
 3. Verify L_NL.tif and RGB_NL.tif are detected
 4. Click **Build Layers**
 
 **For SHO:**
+
 1. Select Mode B
 2. Enable "Auto-detect from folder" and click **Select Folder...**
 3. Select "SHO (Hubble)" preset
@@ -477,6 +483,7 @@ The auto-detect feature searches for files matching these patterns:
 ### 5.1 Example: Processing LRGB Data
 
 **PixInsight:**
+
 1. Scan folder containing L, R, G, B masters
 2. Enable "RGB Processing" with: Gradient, LinearFit, Combine, Blur, Noise, Stretch, Star Removal
 3. Enable "NB/L Processing" for L channel with: Gradient, Blur, Noise, Stretch
@@ -485,6 +492,7 @@ The auto-detect feature searches for files matching these patterns:
 **Output files:** `L_NL.tif`, `RGB_NL.tif`, `RGB_Stars_NL.tif`
 
 **Photoshop:**
+
 1. Select Mode A
 2. Auto-detect from output folder
 3. Enable Stars group and Global adjustments
@@ -494,6 +502,7 @@ The auto-detect feature searches for files matching these patterns:
 ### 5.2 Example: HaLRGB with Continuum Subtraction
 
 **PixInsight:**
+
 1. Scan folder containing Ha, L, R, G, B masters
 2. Enable "RGB Processing" with all options plus "Save individual R channel"
 3. Enable "NB/L Processing" for Ha and L with Star Removal enabled for Ha
@@ -502,6 +511,7 @@ The auto-detect feature searches for files matching these patterns:
 **Output files:** `Ha_NL.tif`, `HA_Stars_NL.tif`, `L_NL.tif`, `RGB_NL.tif`, `RGB_Stars_NL.tif`, `R_NL.tif`
 
 **Photoshop:**
+
 1. Select Mode A
 2. Auto-detect from output folder (should find all files)
 3. Enable Stars group and Global adjustments
@@ -512,6 +522,7 @@ The auto-detect feature searches for files matching these patterns:
 ### 5.3 Example: SHO Hubble Palette
 
 **PixInsight:**
+
 1. Scan folder containing Ha, OIII, SII masters
 2. Enable "NB/L Processing" with: Gradient, Blur, Noise, Stretch, Star Removal (for Ha)
 3. Run pipeline
@@ -519,6 +530,7 @@ The auto-detect feature searches for files matching these patterns:
 **Output files:** `Ha_NL.tif`, `HA_Stars_NL.tif`, `OIII_NL.tif`, `SII_NL.tif`
 
 **Photoshop:**
+
 1. Select Mode B
 2. Auto-detect from output folder
 3. Select "SHO (Hubble)" preset
@@ -529,6 +541,7 @@ The auto-detect feature searches for files matching these patterns:
 ### 5.4 Example: HOO Bicolor
 
 **PixInsight:**
+
 1. Scan folder containing Ha, OIII masters
 2. Enable "NB/L Processing" with: Gradient, Blur, Noise, Stretch, Star Removal (for Ha)
 3. Run pipeline
@@ -536,6 +549,7 @@ The auto-detect feature searches for files matching these patterns:
 **Output files:** `Ha_NL.tif`, `HA_Stars_NL.tif`, `OIII_NL.tif`
 
 **Photoshop:**
+
 1. Select Mode B
 2. Auto-detect from output folder
 3. Select "HOO (Bicolor)" preset
@@ -700,7 +714,7 @@ You may redistribute and/or modify it under the terms of the GPL as published by
 
 ## Version History
 
-### v1.0.4 (January 2026)
+### v1.0.5 (January 2026)
 - Initial public release
 - PixInsight: Dual NB/L and RGB pipelines with MAS stretch
 - Photoshop: Mode A (LRGB/HaLRGB) and Mode B (Narrowband palettes)
