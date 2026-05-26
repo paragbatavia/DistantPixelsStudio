@@ -1,5 +1,5 @@
 // ============================================================================
-// Distant Pixels Studio v1.0.7
+// Distant Pixels Studio v1.0.10
 // PixInsight Linear Processing Pipeline
 // ============================================================================
 //
@@ -27,17 +27,22 @@
 // ============================================================================
 
 // PixInsight script feature directives (ignore linter warnings on these lines)
+// Use the V8 JavaScript runtime. PixInsight 1.9.4+ on ARM64 macOS has no legacy
+// SpiderMonkey ('sm') engine, and on other platforms scripts default to 'sm'
+// unless this directive is present.
+#engine v8
 #feature-id    Utilities > DistantPixelsStudio
-#feature-info  Distant Pixels Studio v1.0.7 - Linear processing pipeline for astrophotography.
+#feature-info  Distant Pixels Studio v1.0.10 - Linear processing pipeline for astrophotography.
 
 #include <pjsr/UndoFlag.jsh>
 #include <pjsr/StdCursor.jsh>
 #include <pjsr/StdIcon.jsh>
 #include <pjsr/StdButton.jsh>
 #include <pjsr/TextAlign.jsh>
-#include <pjsr/Sizer.jsh>
+// Sizer.jsh and NumericControl.jsh intentionally omitted: under V8,
+// HorizontalSizer/VerticalSizer/NumericControl/NumericEdit are built-in globals,
+// and re-declaring them via these .jsh files throws a SyntaxError.
 #include <pjsr/FrameStyle.jsh>
-#include <pjsr/NumericControl.jsh>
 #include <pjsr/DataType.jsh>
 
 // ---------------------------- Utilities ----------------------------
@@ -163,17 +168,21 @@ function loadSettings(dialog)
 
 function checkPixInsightVersion()
 {
-   // Check PixInsight version using proper API
    try {
-      var version = CoreApplication.version;
-      var versionString = CoreApplication.versionString;
-      
+      // CoreApplication exposes versionMajor/Minor/Release/Revision (no
+      // single 'version' or 'versionString' property in 1.9.x V8 PJSR).
+      var major = CoreApplication.versionMajor;
+      var minor = CoreApplication.versionMinor;
+      var release = CoreApplication.versionRelease;
+      var revision = CoreApplication.versionRevision;
+      var versionString = major + "." + minor + "." + release + "-" + revision;
+
       Console.writeln("PixInsight version: " + versionString);
       Console.writeln("Script designed for PixInsight 1.8.8 or later");
-      
-      // Check if we have the minimum required version (1.8.8 = version code 0x010808)
-      var minVersionCode = 0x010808;
-      if (version < minVersionCode) {
+
+      // Compose a comparable integer MMmmRRrr (e.g. 1.8.8 -> 1080800).
+      var versionCode = major * 1000000 + minor * 10000 + release * 100 + revision;
+      if (versionCode < 1080800) {
          Console.warningln("Warning: This script may not work properly with PixInsight versions older than 1.8.8");
       } else {
          Console.writeln("Version check passed.");
@@ -1089,7 +1098,9 @@ function applyMultiscaleAdaptiveStretch( win, targetBackground, aggressiveness, 
       P.aggressiveness = aggressiveness;
       P.dynamicRangeCompression = dynamicRangeCompression;
       P.contrastRecovery = true;
-      P.scaleSeparation = 7;
+      // scaleSeparation valid range is 8-1024 in PixInsight 1.9.x (was looser
+      // previously). 8 is the minimum and preserves the original low-scale intent.
+      P.scaleSeparation = 8;
       P.previewLargeScale = false;
       P.saturationEnabled = true;
       P.saturationAmount = 0.75;
@@ -1112,12 +1123,16 @@ function applyMultiscaleAdaptiveStretch( win, targetBackground, aggressiveness, 
 
 // --------------------------- GUI Dialog ----------------------------
 
-function PipelineDialog()
+// V8 requires ES6 class syntax for Dialog subclasses; the legacy
+// `this.__base__ = Dialog; this.__base__();` idiom throws because V8 forbids
+// invoking a class constructor without `new`.
+var PipelineDialog = class extends Dialog
 {
-   this.__base__ = Dialog;
-   this.__base__();
+   constructor()
+   {
+      super();
 
-   this.windowTitle = "Distant Pixels Studio v1.0.7";
+   this.windowTitle = "Distant Pixels Studio v1.0.10";
    this.adjustToContents();
    this.setVariableSize();
 
@@ -1129,7 +1144,7 @@ function PipelineDialog()
    this.helpLabel.wordWrapping = true;
    this.helpLabel.useRichText = true;
    this.helpLabel.text =
-      "<p><b>Distant Pixels Studio Linear Processor v1.0.7</b> &mdash; " +
+      "<p><b>Distant Pixels Studio Linear Processor v1.0.10</b> &mdash; " +
       "A script to implement linear processing workflows for RGB and Narrowband astrophotography images.<br/>" +
       "<br/>" +
       "Copyright &copy; 2026 Distant Pixels Studio</p>";
@@ -1680,9 +1695,57 @@ function PipelineDialog()
                                 "Distant Pixels Studio", StdIcon_Warning, StdButton_Yes, StdButton_No );
       if ( msg.execute() == StdButton_Yes )
       {
+         // Clear stored settings
          Settings.remove( "DistantPixelsStudio" );
-         this.dialog.resetRequest = true;
-         this.dialog.cancel();
+
+         // Reset file paths
+         this.dialog.scanFolderEdit.text = "";
+         this.dialog.haRow.edit.text = "";
+         this.dialog.oiiiRow.edit.text = "";
+         this.dialog.siiRow.edit.text = "";
+         this.dialog.rRow.edit.text = "";
+         this.dialog.gRow.edit.text = "";
+         this.dialog.bRow.edit.text = "";
+         this.dialog.lRow.edit.text = "";
+         this.dialog.cropFileEdit.text = "";
+         this.dialog.outDirEdit.text = "";
+
+         // Reset checkboxes to defaults
+         this.dialog.cropCheck.checked = false;
+         this.dialog.nb_processCheck.checked = true;
+         this.dialog.nb_gradientCheck.checked = true;
+         this.dialog.nb_blurCheck.checked = true;
+         this.dialog.nb_noiseCheck.checked = true;
+         this.dialog.nb_stretchCheck.checked = true;
+         this.dialog.nb_starCheck.checked = true;
+         this.dialog.nb_finalNoiseCheck.checked = true;
+         this.dialog.rgb_processCheck.checked = true;
+         this.dialog.rgb_gradientCheck.checked = true;
+         this.dialog.rgb_linearfitCheck.checked = true;
+         this.dialog.rgb_combineCheck.checked = true;
+         this.dialog.rgb_blurCheck.checked = true;
+         this.dialog.rgb_noiseCheck.checked = true;
+         this.dialog.rgb_stretchCheck.checked = true;
+         this.dialog.rgb_starCheck.checked = true;
+         this.dialog.rgb_saveRCheck.checked = false;
+         this.dialog.rgb_finalNoiseCheck.checked = true;
+         this.dialog.out_saveTifCheck.checked = true;
+         this.dialog.out_keepImagesCheck.checked = true;
+
+         // Reset numeric values to defaults
+         this.dialog.nb_denoiseSpinBox.value = 40;
+         this.dialog.nb_detailSpinBox.value = 15;
+         this.dialog.nb_finalDenoiseSpinBox.value = 20;
+         this.dialog.nb_finalDetailSpinBox.value = 25;
+         this.dialog.rgb_denoiseSpinBox.value = 40;
+         this.dialog.rgb_detailSpinBox.value = 15;
+         this.dialog.rgb_finalDenoiseSpinBox.value = 20;
+         this.dialog.rgb_finalDetailSpinBox.value = 25;
+         this.dialog.mas_targetBgControl.setValue( 0.15 );
+         this.dialog.mas_aggressivenessControl.setValue( 0.70 );
+         this.dialog.mas_dynRangeControl.setValue( 0.40 );
+
+         Console.writeln( "Settings reset to defaults." );
       }
    };
 
@@ -2216,8 +2279,8 @@ function PipelineDialog()
       Console.writeln( "RGB workflow: " + (rgb_doProcess ? "Enabled" : "Disabled") );
       Console.writeln( "NB/L workflow: " + (nb_doProcess ? (nbImages.length > 0 ? "Processed " + nbImages.length + " images" : "No images") : "Disabled") );
    };
-}
-PipelineDialog.prototype = new Dialog;
+   }
+};
 
 // ------------------------------ Main -------------------------------
 

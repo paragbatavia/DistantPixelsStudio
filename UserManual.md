@@ -1,4 +1,4 @@
-# Distant Pixels Studio v1.0.7 - User Manual
+# Distant Pixels Studio v1.0.10 - User Manual
 
 A two-tool workflow for astrophotography image processing, combining PixInsight linear preprocessing with Photoshop layer composition.
 
@@ -55,15 +55,31 @@ PixInsight (Linear Processing)          Photoshop (Composition)
 
 ## 2. Installation
 
-### PixInsight Script Installation
+### PixInsight Script Installation (Recommended)
 
-1. Download `DistantPixelsStudio_PI.js` to your computer
+Install via PixInsight's built-in update system:
+
+1. Open PixInsight
+2. Go to **Resources > Updates > Manage Repositories**
+3. Click **Add**
+4. Enter the repository URL:
+   ```
+   https://raw.githubusercontent.com/paragbatavia/DistantPixelsStudio/main/
+   ```
+5. Click **OK**, then click **Check for Updates**
+6. Select "Distant Pixels Studio" and click **Apply**
+7. Restart PixInsight
+8. Access via **Script > Utilities > DistantPixelsStudio**
+
+Future updates will be available automatically through **Resources > Updates > Check for Updates**.
+
+### PixInsight Manual Installation (Alternative)
+
+1. Download `DistantPixelsStudio_PI.js` from the repository
 2. In PixInsight, go to **Script > Feature Scripts**
 3. Click **Add** and navigate to the folder containing the script
 4. Click **Done**
 5. Access via **Script > Utilities > DistantPixelsStudio**
-
-**Alternative:** Run directly via **Script > Run Script File** and select `DistantPixelsStudio_PI.js`
 
 ### Photoshop Script Installation
 
@@ -625,6 +641,12 @@ The auto-detect feature searches for files matching these patterns:
 
 ### PixInsight Issues
 
+**"The legacy 'sm' JavaScript engine is not available in this PixInsight build":**
+- Occurs on PixInsight 1.9.4 ARM64 (Apple Silicon) macOS, which removed the legacy SpiderMonkey engine
+- The script declares `#engine v8` near the top of `DistantPixelsStudio_PI.js`; if you edited the file, ensure that directive is intact
+- If running from the Process Console, use `run -x=v8 path/to/DistantPixelsStudio_PI.js` instead of `run -x=auto`
+- On Linux, Windows, and Intel macOS the script still runs on V8 with the directive in place
+
 **"Process not found" errors:**
 - Install required plugins (BlurXTerminator, NoiseXTerminator, StarXTerminator)
 - Update PixInsight to latest version
@@ -714,7 +736,15 @@ You may redistribute and/or modify it under the terms of the GPL as published by
 
 ## Version History
 
-### v1.0.7 (January 2026)
+### v1.0.10 (May 2026)
+- PixInsight 1.9.4 / V8 JavaScript engine compatibility (ARM64 macOS support)
+- Added `#engine v8` directive
+- Migrated `PipelineDialog` to ES6 class syntax (replaces legacy `__base__` idiom)
+- Removed redundant `Sizer.jsh` and `NumericControl.jsh` includes (now V8 built-ins)
+- Updated version check to use `CoreApplication.versionMajor/Minor/Release/Revision`
+- Bumped `MultiscaleAdaptiveStretch.scaleSeparation` from 7 to 8 (new minimum in 1.9.x)
+
+### v1.0.9 (January 2026)
 - Initial public release
 - PixInsight: Dual NB/L and RGB pipelines with MAS stretch
 - Photoshop: Mode A (LRGB/HaLRGB) and Mode B (Narrowband palettes)

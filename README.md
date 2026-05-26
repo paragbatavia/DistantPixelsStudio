@@ -1,4 +1,4 @@
-# Distant Pixels Studio v1.0.7
+# Distant Pixels Studio v1.0.10
 
 A two-tool workflow for astrophotography image processing: PixInsight linear preprocessing combined with Photoshop layer composition.
 
@@ -34,16 +34,40 @@ The workflow processes master files through PixInsight's linear pipeline, then b
 
 ### Requirements
 
-- PixInsight 1.9.0 or later
+- PixInsight 1.9.0 or later (V8 JavaScript runtime supported in 1.9.4+)
 - Optional plugins: BlurXTerminator, NoiseXTerminator, StarXTerminator
 - Built-in: GradientCorrection, LinearFit, PixelMath, MultiscaleAdaptiveStretch
 
+### JavaScript Engine
+
+The script declares `#engine v8` so it runs on the V8 runtime. This is required on
+PixInsight 1.9.4 ARM64 macOS (Apple Silicon), which does not ship the legacy
+SpiderMonkey engine. On Linux, Windows, and Intel macOS the V8 engine is also
+available and generally faster.
+
+If you ever see `*** Error: The legacy 'sm' JavaScript engine is not available in
+this PixInsight build.`, verify the `#engine v8` directive is present near the top
+of `DistantPixelsStudio_PI.js`. When running from the Process Console, prefer
+`run -x=v8 path/to/DistantPixelsStudio_PI.js` over `-x=auto`.
+
 ### Installation
+
+**Via Repository (Recommended):**
+
+1. In PixInsight: **Resources > Updates > Manage Repositories**
+2. Click **Add** and enter:
+   ```
+   https://raw.githubusercontent.com/paragbatavia/DistantPixelsStudio/main/
+   ```
+3. Click **Check for Updates**, select "Distant Pixels Studio", click **Apply**
+4. Restart PixInsight
+5. Access via **Script > Utilities > DistantPixelsStudio**
+
+**Manual Installation:**
 
 1. Download `DistantPixelsStudio_PI.js`
 2. In PixInsight: **Script > Feature Scripts > Add**
 3. Navigate to the script folder and click **Done**
-4. Access via **Script > Utilities > DistantPixelsStudio**
 
 ### Processing Order
 
@@ -174,7 +198,15 @@ See [UserManual.md](UserManual.md) for comprehensive documentation including:
 
 ## Version History
 
-### v1.0.7 (January 2026)
+### v1.0.10 (May 2026)
+- PixInsight 1.9.4 / V8 JavaScript engine compatibility (ARM64 macOS support)
+- Added `#engine v8` directive
+- Migrated `PipelineDialog` to ES6 class syntax (replaces legacy `__base__` idiom)
+- Removed redundant `Sizer.jsh` and `NumericControl.jsh` includes (now V8 built-ins)
+- Updated version check to use `CoreApplication.versionMajor/Minor/Release/Revision`
+- Bumped `MultiscaleAdaptiveStretch.scaleSeparation` from 7 to 8 (new minimum in 1.9.x)
+
+### v1.0.9 (January 2026)
 - Initial public release
 - PixInsight: Dual NB/L and RGB pipelines with MultiscaleAdaptiveStretch
 - Photoshop: Mode A (LRGB/HaLRGB) and Mode B (Narrowband palettes)
