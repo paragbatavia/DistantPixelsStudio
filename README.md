@@ -1,4 +1,4 @@
-# Distant Pixels Studio v1.0.10
+# Distant Pixels Studio v1.0.11
 
 A two-tool workflow for astrophotography image processing: PixInsight linear preprocessing combined with Photoshop layer composition.
 
@@ -197,6 +197,9 @@ See [UserManual.md](UserManual.md) for comprehensive documentation including:
 ---
 
 ## Version History
+
+### v1.0.11 (May 2026)
+- Fixed RGB combine step under V8: `PixelMath.prototype.RGB`/`.f32` returned `undefined` in V8 PJSR, causing PixelMath to fail with "signed integer value expected". Now uses `PixelMath.RGB`/`PixelMath.f32` (V8 dot-notation constants).
 
 ### v1.0.10 (May 2026)
 - PixInsight 1.9.4 / V8 JavaScript engine compatibility (ARM64 macOS support)

@@ -1,5 +1,5 @@
 // ============================================================================
-// Distant Pixels Studio v1.0.10
+// Distant Pixels Studio v1.0.11
 // PixInsight Linear Processing Pipeline
 // ============================================================================
 //
@@ -32,7 +32,7 @@
 // unless this directive is present.
 #engine v8
 #feature-id    Utilities > DistantPixelsStudio
-#feature-info  Distant Pixels Studio v1.0.10 - Linear processing pipeline for astrophotography.
+#feature-info  Distant Pixels Studio v1.0.11 - Linear processing pipeline for astrophotography.
 
 #include <pjsr/UndoFlag.jsh>
 #include <pjsr/StdCursor.jsh>
@@ -619,8 +619,11 @@ function combineRGBPixelMath( rWin, gWin, bWin )
       p.newImageWidth = 0;
       p.newImageHeight = 0;
       p.newImageAlpha = false;
-      p.newImageColorSpace = PixelMath.prototype.RGB;
-      p.newImageSampleFormat = PixelMath.prototype.f32;
+      // V8 PJSR exposes PixelMath constants as direct class properties
+      // (PixelMath.RGB), not via .prototype.X like the legacy SpiderMonkey
+      // engine. The old form returns undefined under V8.
+      p.newImageColorSpace = PixelMath.RGB;
+      p.newImageSampleFormat = PixelMath.f32;
       
       if ( !p.executeOn( rgbWin.mainView, false ) ) {
          Console.warningln("PixelMath RGB combination failed.");
@@ -1132,7 +1135,7 @@ var PipelineDialog = class extends Dialog
    {
       super();
 
-   this.windowTitle = "Distant Pixels Studio v1.0.10";
+   this.windowTitle = "Distant Pixels Studio v1.0.11";
    this.adjustToContents();
    this.setVariableSize();
 
@@ -1144,7 +1147,7 @@ var PipelineDialog = class extends Dialog
    this.helpLabel.wordWrapping = true;
    this.helpLabel.useRichText = true;
    this.helpLabel.text =
-      "<p><b>Distant Pixels Studio Linear Processor v1.0.10</b> &mdash; " +
+      "<p><b>Distant Pixels Studio Linear Processor v1.0.11</b> &mdash; " +
       "A script to implement linear processing workflows for RGB and Narrowband astrophotography images.<br/>" +
       "<br/>" +
       "Copyright &copy; 2026 Distant Pixels Studio</p>";
